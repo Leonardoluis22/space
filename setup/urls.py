@@ -1,11 +1,8 @@
 from django.contrib import admin
-import index from galeria.
-from django.urls import path
-
-
+from django.urls import path, include
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", galeria)
-]
+    path("", include("galeria.urls")),
+]   
 

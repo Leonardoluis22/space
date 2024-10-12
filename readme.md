@@ -4,7 +4,7 @@
 -   python -m venv 'nome, convensão *.venv*'
 -   Ativar ambiente virtual, acesse a pasta e selecione o arquivo *Activate*
     -   Pode ser necessário desativar uma política de segurança
-        - Execute: Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass 
+        - Execute: **Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass** 
     -   Ex: cd .\.venv\Scripts\activate
 - Instale o django com o ambiente ativado
     -   pip install django
@@ -107,7 +107,6 @@
     "django.contrib.staticfiles",
     "galeria",
     ]
-    ```
 2.  startproject
     1. Um projeto em django pode conter diversos App dentro dele.
     
@@ -115,15 +114,80 @@
 ### View e URLs
 
 -   Views.py é o arquivo responsável por renderizar na tela e o conteúdo delas, isso quando é feito uma requisição
-1.  Trabalhando com *HttpResponse* e funções
+
+1.  Trabalhando com *HttpResponse* e *funções*
+
     1.  ```python
+        Arquivo views.py
         from django.http import HttpResponse
 
         def index(request):
             return HttpResponse("Olá mundo!")
         
-        ```
-        No arquivo views.py, importei o *HttpResponse* e criei uma função que está retornando uma String, depois no arquivo *urls.py*
+    No arquivo views.py, importei o *HttpResponse* e criei uma função que está retornando uma String, depois no arquivo *urls.py*
+
+     2.  Importando a função no arquivo *urls.py* e criando a rota para quando for feito uma requisição
+    
+        ```python
+
+            from galeria.views import index
+                urlpatterns = [
+                    path("admin/", admin.site.urls),
+                    path("", index)]
+                
+        
+2.  Isolando URLs
+
+-   Crie um arquivo urls.py dentro de cada APP
+    -   Crie import o que for necessário, como o *path* presente no arquivo de urls padrão.
+    -   Crie uma lista que será usada para armazenar os *paths*
+
+    ```python
+    from django.urls import path
+    from galeria.views import index
+
+    urlpatterns = [
+        path("", index)
+    ]
+    ```
+-   Agora é necessário deixar o *urlpatterns* disponível no *urls* de settings na pasta setup
+    -   import o *include* e crie um *path* com o nome do seu app + urls do app. Ex: meu app se chama galeria, então fica da seguinte forma.
+
+    ```python
+        from django.urls import path, include
+
+        urlpatterns = [
+            path("admin/", admin.site.urls),
+            path("", include("galeria.urls")),
+            ]  
+    ``` 
+**Desta forma todas as urls do app fica no arquivo urls.py do App** pode ser feito em todas as Apps
+
+
+3.  vinculandos os **templates** no projeto
+    -   Dentro de settings.py existe uma lista chamada *TEMPLATES*
+    e existe outra lista dentro chamada **DIRS** que é o o local que devemos passar o diretório dos templates. 
+
+    ```python
+
+     "DIRS": [
+            os.path.join(BASE_DIR, "templates")
+        ],
+       #Utilizando OS.path.join, o BASE_DIR é o diretório raiz da aplicação e o nome da pasta que criamos onde ficará os templates, no exemplo nomei como "templates"  
+
+    ```
+    -   Usando o método *render* consigo dizer para view qual o arquivo que eu quero que ele renderize.
+
+    ```python
+        def index(request):
+        return render(request, "index.html")
+    ```
+
+
+
+
+
+
 
 
 
