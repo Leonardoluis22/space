@@ -182,11 +182,45 @@
         def index(request):
         return render(request, "index.html")
     ```
+    -  Podemos criar uma pasta para cada template que criamos, deixando mais organizado nossa estrutura.  
+        EX: **templates/galeria > index.html**
+
+    -   Importando os arquivos estáticos(css/img dentro outros)
+    -   Primeiro crie uma pasta em **setup > static** com nome de *static*
+    -   depois em settings.py configure crie e configure as seguinte lista e variável
+
+    ```python
+
+        # AQUI INDICAMOS ONDE TODOS OS ARQUIVOS ESTÃO
+        STATICFILES_DIRS = [
+            os.path.join(BASE_DIR, 'setup/static')
+        ]
+
+        # AQUI INDICAMOS ONDE O PYTHON VAI COLETAR OS ARQUIVOS PARA IMPLEMENTAR
+        STATIC_ROOT = os.path.join(BASE_DIR, "static")
+   
+**Dentro da pasta static criada em setup é onde se deve manter os arquivos se estilos e arquivos estáticos**
+    -   É necessário executar um comando no terminal para que o python busque, endereçe e utilize esses arquivos
+    -   Execute o seguinte comando:
+
+    ```shell
+        python manage.py collectstatic
+
+    ```
+Para realizar as alterações, vamos acessar "templates/galeria > index.html". Vamos adicionar o código **{% load static %}**, que solicita o carregamento dos arquivos estáticos, à primeira linha do arquivo.
+
+Vamos carregar, inicialmente, o arquivo "style.css", o caminho para encontrá-lo é "static > styles > style.css". Na linha 13 do código, vamos adicionar **{% static após o href e %}** após o fechamento das aspas, o que identifica um arquivo estático a ser subido.
+
+Também vamos colocar **styles/style.css** entre aspas simples e levar as aspas duplas para depois do fechamento das chaves:
+
+```html
+<link rel="stylesheet" href="{% static '/styles/style.css' %}">
+```
+
+### Carregandos as imagens          
 
 
-
-
-
+     
 
 
 
