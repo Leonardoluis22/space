@@ -320,4 +320,4 @@ De volta a **"index.html"**, vamos informar onde começam os blocos logo abaixo 
 ```
 
 -   Removemos tudo relacionado ao footer dos arquivos.
--   Agora no **base.html** faremos a inclusão do 
+-   Agora no **base.html** faremos a inclusão do footer
