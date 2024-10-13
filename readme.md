@@ -207,6 +207,23 @@
         python manage.py collectstatic
 
     ```
+4.  URL name
+
+Quando digitamos "localhost:8000/imagem/" no navegador, a página de imagem é renderizada, porque o Django reconhece sua existência. Porém, quando estamos na página principal e clicamos na imagem, que deveria nos redirecionar para a segunda página, nos deparamos com uma página de erro.
+
+Isso acontece porque a imagem está nos mandando para "imagem.html". Queremos acessar a página de imagem quando clicarmos nas imagens da página principal. Na linha 55 do código "index.html", encontramos o href que nos manda para "imagem.html".
+
+Vamos indicar as URLs que já possuímos registradas em path. Vamos inserir o caminho que queremos no arquivo *"galeria > url.py"*. No último path, passaremos name='imagem'). De volta a "index.html", podemos remover "imagem.html do href da linha 55.
+
+No lugar dele, escreveremos a função usando código Django:
+
+```html
+    <a href="{% url 'imagem' %}">
+```
+Depois disso, voltamos ao navegador, recarregamos a página e clicamos na primeira imagem. Isso fará com que o caminho funcione. Na segunda imagem, também precisaremos indicar o caminho <a href="{% url 'imagem' %}">. Seguiremos esse mesmo procedimento para as todas as imagens.
+
+
+
 Para realizar as alterações, vamos acessar "templates/galeria > index.html". Vamos adicionar o código **{% load static %}**, que solicita o carregamento dos arquivos estáticos, à primeira linha do arquivo.
 
 Vamos carregar, inicialmente, o arquivo "style.css", o caminho para encontrá-lo é "static > styles > style.css". Na linha 13 do código, vamos adicionar **{% static após o href e %}** após o fechamento das aspas, o que identifica um arquivo estático a ser subido.
@@ -217,15 +234,90 @@ Também vamos colocar **styles/style.css** entre aspas simples e levar as aspas 
 <link rel="stylesheet" href="{% static '/styles/style.css' %}">
 ```
 
+
+
 ### Carregandos as imagens          
 
+Para todos os arquivos estático, precisaremos adicionar **{% static', antes do caminho do arquivo, e ' %}** depois.
 
-     
+```html
+<img src="{% static '/assets/logo/Logo(2).png'  %}" alt="Logo da Alura Space />
+```
+### Carregando outra pagina ao seleciona uma das imagens 
+
+O nome que aparece na URL, quando tentamos carregá-la, é "imagem.html". Vamos acessar a pasta "templates/galeria" e criar um novo arquivo, chamado "imagem.html". Vamos pegar o conteúdo de "imagem.html" do conteúdo disponibilizado pelo instrutor.
 
 
+Vamos informar isso criando uma nova função em "galeria > views.py". Será a função imagem, que receberá como argumento request e retornará render(request, 'galeria/imagem.html'):
 
+```python
+    from django.shortcuts import render
 
+    def index(request):
+        return render(request, 'galeria/index.html')
 
+    def imagem(request):
+        return render(request, 'galeria/imagem.html')
+```
 
+Ainda precisamos criar a rota para que isso funcione. Para fazer isso, acessaremos "galeria > urls.py", o arquivo que cuida das rotas específicas da galeria. Nela, adicionaremos uma rota com o caminho 'imagem/', imagem. Em from galeria.views, vamos importar imagem além de index:
 
+```python
+   from django.urls import path
+    from galeria.views import index, imagem
 
+    urlpatterns = [
+        path("imagem/", imagem, name="imagem"),
+        # # se no href do index.html estiver "imagem" ele vai encontra ou se estiver "imagem_html, ele também vai encontrar"
+        # path("imagem.html", imagem, name="imagem_html")
+    ]
+```
+
+### BASE, DRY e PARTIALS
+
+Criando um arquivo separado chamado *base.html* que terá código reutilizável
+DRY, "Don't Repeat Yourself", que significa "não seja repetitivo", em português. Essa ação significa não permitir a existência de código duplicado. É importante que cada parte seja isolada.
+-   Vamos até a pasta "templates/galeria". Nela criaremos, o arquivo "base.html". Ele vai receber toda a estrutura principal do nosso HTML. Em outras palavras, os trechos de código semelhantes em **"index.html"** e "imagem.html".
+-   Por isso, vamos selecionar todo o código, de <body> para cima, copiá-lo com um "Ctrl + C" e colá-lo no arquivo "base.html". Depois vamos fechar a tag <body> e a tag <html>. Agora vamos voltar ao arquivo "index.html" e excluir todo o trecho de código que acabamos de copiar. Depois, faremos o mesmo com o arquivo **"imagem.html"**.
+-   Agora esse conteúdo está isolada no arquivo "base.html". Precisamos, portanto, utilizar o Django para passar esse conteúdo para os arquivos **"index.html"** e "imagem.html". Para isso, vamos passar **{% extends 'galeria/base.html %}**. Na linha abaixo, vamos fazer o carregamento dos arquivos estáticos com **{% load static %}**. Isso vale para os dois arquivos:
+
+```python
+
+    {% extends 'galeria/base.html' %}
+    {% load static %}
+
+```
+
+Agora vamos fazer o inverso: precisamos passar o conteúdo do <body> de "index.html" para "base.html". Faremos isso usando as propriedades **block content** e **endblock**:
+
+```html
+    <body>
+        {% block content %}{% endblock %}
+    </body>
+```
+
+De volta a **"index.html"**, vamos informar onde começam os blocos logo abaixo dos carregamentos que fizemos nas duas primeiras linhas. Vamos inserir o block content. Também vamos indicar om final do bloco, com endblock:
+
+```python
+    {% extends 'galeria/base.html' %}
+    {% load static %}
+    {% block content %}
+        ##HTML
+    {% endblock %}
+```
+
+-   O arquivo **"base.html"** serve para reunir as estruturas principais da aplicação. Funcionalidades, botões e menus de navegação não são enviados para esse arquivo. Dentro de **"templates/galeria"**, criaremos a pasta **"partials"**. Dentro dela, criaremos o arquivo **"_footer.html"**, que receberá as estruturas.
+-   Vamos acessar "templates/galeria > index.html" e recortar, com "Ctrl + X", o código entre as tags <footer>. Vamos colá-lo no arquivo **"_footer.html"**, que tem arquivos estáticos para carregar. Por isso, vamos passar **load static** na primeira linha do código:
+    -   Padrão de nomenclaturas
+        -   > Pasta: **partials**
+        -   > Arquivo: **_nomeDoArquivo.html**
+
+```python
+    {% load static %}
+        <footer class="rodape">
+            ...
+        </footer>
+```
+
+-   Removemos tudo relacionado ao footer dos arquivos.
+-   Agora no **base.html** faremos a inclusão do 
