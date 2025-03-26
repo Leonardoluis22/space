@@ -321,3 +321,41 @@ De volta a **"index.html"**, vamos informar onde começam os blocos logo abaixo 
 
 -   Removemos tudo relacionado ao footer dos arquivos.
 -   Agora no **base.html** faremos a inclusão do footer
+
+
+## Nomes dinâmicos
+
+-   Aqui foi criado uma dicionário e passo ele no return na função, assim ficando disponivivel no index
+```python
+
+def index(request):
+
+    dados = {
+        
+    1: {"Nome": "Nebulosa de Carina", 
+    "Legenda":  "webtelescope.org / NASA / James Webb",},
+    2: {
+    "Nome": "Galáxia NGC 1079",
+    "Legenda": "nasa.org / NASA / Hubble",}
+}
+    return render(request, "galeria/index.html", {"cards": dados})
+
+```
+
+- Para tornar os cartões dinâmicos, foi criada uma estrutura de dados no formato de dicionário em views.py que armazena informações sobre as imagens, como nome e legenda.
+
+**Utilizando Estruturas de Repetição no Template**
+
+```python
+
+    {% for foto_id, info in cards.items %}
+        <li class="card">
+            <p class="card__titulo">{{ info.nome }}</p>
+            <p class="card__descricao">{{ info.legenda }}</p>
+        </li>
+    {% endfor %}
+
+```
+
+### Banco de Dados
+
